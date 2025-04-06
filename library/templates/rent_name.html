@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Rent Book: {{ book.title }}</h1>
+    <form method="post" action="{% url 'rent_name' book.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username of the person renting the book:</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Rent Book</button>
+    </form>
+
+    {% if messages %}
+        <div>
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{% if show_message_box %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+Swal.fire({
+    title: 'Attention!',
+    text: "{{ message }}",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No'
+}).then((result) => {
+    if (result.isConfirmed) {
+        // Ejecutar lógica de confirmación aquí o redirigir a una URL específica
+        window.location.href = "{% url 'confirm_rental' book.id username %}"; // Necesitarías implementar esta URL y vista en Django
+    } else {
+        // Ejecutar lógica de cancelación aquí o redirigir a una URL específica
+        window.location.href = "{% url 'book_description' book.id %}"; // Necesitarías implementar esta URL y vista en Django
+    }
+});
+</script>
+{% endif %}
+
+{% if show_message_box2 %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            title: 'Success!',
+            text: "{{ message }}",
+            icon: 'success',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{% url 'book_description' book.id %}";
+            }
+        });
+    });
+    </script>
+{% endif %}
+{% endblock %}

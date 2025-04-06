@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <form method="post" enctype="multipart/form-data" class="profile-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form_book.title.label_tag }}
+            <input type="text" class="form-control" id="id_title" name="title" required value="{{book.title}}">
+        </div>
+        <div class="form-group">
+            {{ form_book.author.label_tag }}
+            <input type="text" class="form-control" id="id_author" name="author" required value="{{book.author}}">
+        </div>
+        <div class="form-group">
+            {{ form_details.isbn.label_tag }}
+            <input type="text" class="form-control" id="id_isbn" name="isbn" required value="{{bookdetails.isbn}}">   
+        </div>
+        <div class="form-group">
+            {{ form_details.genre.label_tag }}
+            <input type="text" class="form-control" id="id_genre" name="genre" required value="{{bookdetails.genre}}">   
+        </div>
+        <div class="form-group">
+            {{ form_details.subject.label_tag }}
+            <input type="text" class="form-control" id="id_subject" name="subject" required value="{{bookdetails.subject}}">   
+        </div>
+        <div class="form-group">
+            {{ form_details.publisher.label_tag }}
+            <input type="text" class="form-control" id="id_publisher" name="publisher" required value="{{bookdetails.publisher}}">   
+        </div>
+        <div class="form-group">
+            {{ form_book.description.label_tag }}
+            <textarea class="form-control" id="id_description" name="description" rows="4" cols="50" required>{{ book.description }}</textarea>
+        </div>
+        <div class="form-group">
+            {{ form_book.image.label_tag }}
+            <input type="file" class="form-control-file" id="id_image" name="image" accept="image/*" >
+        </div>
+        <div class="form-group">
+            {{ form_book.reserved_date.label_tag }}
+            <input type="date" class="form-control" id="id_reserved_date" name="reserved_date" value="{{ book.reserved_date|date:'Y-m-d' }}">
+        </div>
+        <div class="form-group form-check">
+            {{ form_book.reserved }}
+            <label class="form-check-label" for="id_reserved">Reserved</label>
+        </div>
+        <div class="form-group">
+            {{ form_book.rating_average.label_tag }}
+            <input type="text" class="form-control" id="id_rating_average" name="rating_average" required value="{{book.rating_average}}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock content %}

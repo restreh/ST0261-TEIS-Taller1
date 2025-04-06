@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for book in book_history.rented_books.all %}
+    <div class="col">
+        <div class="card h-100" style="width: 15rem;">
+            <img src="{{ book.image.url }}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <h3 class="card-text">{{ book.author }}</h3>
+                {% if book.real_available and not book.reserved %}
+                    <p class="card-text">Available</p>
+                {% elif book.real_available and book.reserved %}
+                    <p class="card-text">Reserved until <span>{{ book.reserved_date }}</span></p>
+                {% elif not book.real_available %}
+                    {% if book.real_availability %}
+                        <p class="card-text">Rented until <span>{{ book.real_availability }}</span></p>
+                    {% else %}
+                        <p class="card-text">Rented</p>
+                    {% endif %}
+                {% endif %}
+                <a href="{% url 'book_description' book.id %}" class="btn btn-info">Description</a>
+                
+                <p>Rating average: {{ book.rating_average }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+        
+
+{% endblock content %}

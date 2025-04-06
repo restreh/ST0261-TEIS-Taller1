@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliatica</title>
+</head>
+<body>
+    <h1>Bibliatica</h1>
+    <p>Welcome to our library. We store information about every book, including availability, to accelerate and facilitate the process of renting books. No more unnecessary trips to the library if the book you need is not available.</p>
+    <h2>Features:</h2>
+    <ul>
+        <li>Search for books by title
+            {% comment %} , author, or genre {% endcomment %}
+            .</li>
+        <li>Check availability status before visiting the library.</li>
+        {% comment %} <li>Rent books online for convenient pickup.</li> {% endcomment %}
+    </ul>
+    <h2>How it Works:</h2>
+    <ol>
+        <li>Browse our catalog or use the search feature to find the book you want.</li>
+        <li>Check the availability status displayed next to each book.</li>
+        {% comment %} <li>If the book is available, you can rent it online.</li> {% endcomment %}
+        <li>Visit the library to pick up your reserved books.</li>
+    </ol>
+    <footer>
+        <p>Contact us for more information or assistance.</p>
+    </footer>
+</body>
+</html>
+{% endblock content %}

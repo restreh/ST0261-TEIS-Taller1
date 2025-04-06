@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.title.label_tag }}
+            <input type="text" class="form-control" id="id_title" name="title" required>
+        </div>
+        <div class="form-group">
+            {{ form.author.label_tag }}
+            <input type="text" class="form-control" id="id_author" name="author" required>
+        </div>
+        <div class="form-group">
+            {{ form.description.label_tag }}
+            <textarea class="form-control" id="id_description" name="description" rows="4" cols="50" required>{{ form.description.value }}</textarea>
+        </div>
+        <div class="form-group">
+            {{ form.image.label_tag }}
+            <input type="file" class="form-control-file" id="id_image" name="image" accept="image/*" required>
+        </div>
+        <div class="form-group">
+            {{ form.reserved_date.label_tag }}
+            <input type="date" class="form-control" id="id_reserved_date" name="reserved_date">
+        </div>
+        <div class="form-group form-check">
+            {{ form.reserved }}
+            <label class="form-check-label" for="id_reserved">Reserved</label>
+        </div>
+        <div class="form-group">
+            {{ form.rating_average.label_tag }}
+            <input type="text" class="form-control" id="id_rating_average" name="rating_average" required value=0>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add book</button>
+    </form>
+</div>
+{% endblock content %}

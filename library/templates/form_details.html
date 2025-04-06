@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form_details.isbn.label_tag }}
+            <input type="text" class="form-control" id="id_isbn" name="isbn" required>   
+        </div>
+        <div class="form-group">
+            {{ form_details.genre.label_tag }}
+            <input type="text" class="form-control" id="id_genre" name="genre" required>   
+        </div>
+        <div class="form-group">
+            {{ form_details.subject.label_tag }}
+            <input type="text" class="form-control" id="id_subject" name="subject" required>   
+        </div>
+        <div class="form-group">
+            {{ form_details.publisher.label_tag }}
+            <input type="text" class="form-control" id="id_publisher" name="publisher" required>   
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add book</button>
+    </form>
+</div>
+{% endblock content %}

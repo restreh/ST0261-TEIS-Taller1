@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<div class="container">
+    <form action="">
+        <div class="mb-3">
+            <label for="searchBook" class="form-label">
+                Search for a book:
+            </label>
+            <input type="text" class="form-control" name="searchBook" id="searchBook"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <form method="GET" action="">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Sort by
+            </button>
+            <div class="dropdown-menu" aria-labelledby="sortDropdown">
+                <input type="hidden" name="searchBook" value="{{ searchTerm }}">
+                <button class="dropdown-item" type="submit" name="sort" value="asc">Ascending score</button>
+                <button class="dropdown-item" type="submit" name="sort" value="desc">Descending score</button>
+                <button class="dropdown-item" type="submit" name="sort" value="genre">Genre</button>
+                <button class="dropdown-item" type="submit" name="sort" value="subject">Subject</button>
+            </div>
+        </div>
+    </form>
+
+    <p>Searching for {{ searchTerm }}</p>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for book in books %}
+        <div class="col">
+            <div class="card h-100" style="width: 15rem;">
+                <img src="{{ book.image.url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <h3 class="card-text">{{ book.author }}</h3>
+                    {% if book.real_available and not book.reserved %}
+                        <p class="card-text">Available</p>
+                    {% elif book.real_available and book.reserved %}
+                        <p class="card-text">Reserved until <span>{{ book.reserved_date }}</span></p>
+                    {% elif not book.real_available %}
+                        {% if book.real_availability %}
+                            <p class="card-text">Rented until <span>{{ book.real_availability }}</span></p>
+                        {% else %}
+                            <p class="card-text">Rented</p>
+                        {% endif %}
+                    {% endif %}
+                    <a href="{% url 'book_description' book.id %}" class="btn btn-info">Description</a>
+
+                    <!-- Rating form -->
+                    {% if request.user.is_authenticated %}
+                        <form id="ratingForm_{{ book.id }}" method="POST" action="{% url 'rate_book' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="book_id" value="{{ book.id }}">
+                            <style>
+                                .rating {
+                                    display: inline-block;
+                                    unicode-bidi: bidi-override;
+                                    direction: rtl;
+                                }
+
+                                .rating input {
+                                    display: none;
+                                }
+
+                                .rating label {
+                                    display: inline-block;
+                                    padding: 5px;
+                                    font-size: 30px;
+                                }
+
+                                .rating label::before {
+                                    content: "\2605";
+                                }
+
+                                .rating input:checked ~ label {
+                                    color: #FFD700;
+                                }
+                            </style>
+                            <div class="rating">
+                                <input type="radio" id="star5_{{ book.id }}" name="rating" value="5"><label for="star5_{{ book.id }}" title="5 stars"></label>
+                                <input type="radio" id="star4_{{ book.id }}" name="rating" value="4"><label for="star4_{{ book.id }}" title="4 stars"></label>
+                                <input type="radio" id="star3_{{ book.id }}" name="rating" value="3"><label for="star3_{{ book.id }}" title="3 stars"></label>
+                                <input type="radio" id="star2_{{ book.id }}" name="rating" value="2"><label for="star2_{{ book.id }}" title="2 stars"></label>
+                                <input type="radio" id="star1_{{ book.id }}" name="rating" value="1"><label for="star1_{{ book.id }}" title="1 star"></label>
+                            </div>
+                            <button type="button" onclick="submitRating('{{ book.id }}')" class="btn btn-primary">Submit rating</button>
+
+                        </form>
+                    {% else %}
+                        <p>Please log in to leave a rating.</p>
+                    {% endif %}
+                    
+                    <p>Rating average: {{ book.rating_average }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function submitRating(bookId) {
+    var form = document.getElementById('ratingForm_' + bookId);
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                alert("Thank you for your rating!");
+                window.location.reload();
+            } else if (xhr.status === 400) {
+                alert("You have already left a rating for this book.");
+            }
+        }
+    };
+    xhr.open('POST', form.action, true);
+    xhr.setRequestHeader('X-CSRFToken', formData.get('csrfmiddlewaretoken'));
+    xhr.send(formData);
+}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+{% endblock content %}
