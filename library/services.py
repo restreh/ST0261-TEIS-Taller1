@@ -5,6 +5,12 @@ from .models import Book
 from .library_interfaces import LibraryInterface
 
 class LibraryService(LibraryInterface):
+    _instance = None  # Aquí se guardará la única instancia
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(LibraryService, cls).__new__(cls)
+        return cls._instance
 
     def cancel_reservation_automatic(self):
         expired_reservations = Book.objects.filter(reserved=True, reserved_date__lt=date.today())
@@ -20,3 +26,5 @@ class LibraryService(LibraryInterface):
         for book in book_list:
             book.real_availability = None
             book.save()
+
+    
