@@ -19,6 +19,8 @@ from django.template import loader
 
 from django.contrib.auth.forms import UserCreationForm
 
+from .services import LibraryService
+
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, help_text='First name')
     last_name = forms.CharField(max_length=30, required=True, help_text='Last name')
@@ -154,6 +156,7 @@ def change_availability(request, book_id):
     # Redirigir a la página de descripción del libro actualizado
     return HttpResponseRedirect(reverse('book_details', args=(book_id,)))
 
+"""
 @login_required
 def reserve_book(request, book_id):
     cancel_reservation_automatic(request)
@@ -184,7 +187,38 @@ def reserve_book(request, book_id):
     
     # Redirigir a la página de descripción del libro actualizado
     return HttpResponseRedirect(reverse('book_details', args=(book_id,)))
+"""
 
+@login_required
+def reserve_book(request, book_id, library_service=LibraryService()):
+    # Usar los métodos a través de la interfaz
+    library_service.cancel_reservation_automatic()
+    library_service.check_rented()
+
+    book = get_object_or_404(Book, pk=book_id)
+    user = request.user
+
+    if book.reserved and book.reserved_by != user and not user.is_staff:
+        reviews = Review.objects.filter(book=book)
+        messages.error(request, "You are not authorized to cancel this reservation.")
+        return render(request, 'book_description.html', {
+            'book': book,
+            'reviews': reviews,
+            'error_message': "You are not authorized to cancel this reservation."
+        })
+
+    if book.reserved:
+        book.reserved = False
+        book.reserved_date = None
+        book.reserved_by = None
+    else:
+        book.reserved = True
+        book.reserved_date = datetime.today().date() + timedelta(days=7)
+        book.reserved_by = user
+
+    book.save()
+
+    return HttpResponseRedirect(reverse('book_details', args=(book_id,)))
 
 
 
