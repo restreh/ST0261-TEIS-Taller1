@@ -81,6 +81,7 @@ Esta es una revisión pedagógica realizada por **Juan José Restrepo** y **Sant
 
   - **Atributo _instance:**  
     Se declara un atributo de clase llamado `_instance` que se utiliza para almacenar la única instancia de la clase. Inicialmente, este atributo se establece en `None`.
+> ![image](https://github.com/user-attachments/assets/b842f5b3-5674-4541-9421-be9f54306b35)
 
   - **Método __new__:**
     En la redefinición de `__new__`, se verifica si `_instance` es `None`. Si es así, se llama a `super().__new__(cls)` para crear la nueva instancia y se asigna a `_instance`. Si `_instance` ya tiene un valor (es decir, ya existe una instancia), simplemente se devuelve esa instancia preexistente.
